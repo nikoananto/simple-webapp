@@ -6,7 +6,7 @@ pipeline {
     }
 
     environment {
-        version = 'v2'
+        version = 'v1'
     }
 
     stages {
