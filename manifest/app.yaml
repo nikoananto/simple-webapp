@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: simple-webapp
+spec:
+  selector:
+    matchLabels:
+      app: simple-webapp
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: simple-webapp
+    spec:
+      serviceAccountName: jenkins
+      serviceAccount: jenkins
+      containers:
+        - name: simple-webapp
+          image: image-registry.openshift-image-registry.svc:5000/jenkins/webapp:
+          ports:
+            - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: simple-webapp-svc
+spec:
+  selector:
+    app: simple-webapp
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: simple-webapp-route
+spec:
+  path: /
+  to:
+    kind: Service
+    name: simple-webapp-svc
+  port:
+    targetPort: 80
